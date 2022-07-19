@@ -332,7 +332,7 @@
                                 @endforeach
                             @endif
 
-                            {{ $result->links() }}
+                            {{-- {{ $result->links() }}--}}
                         </tbody>
                     </table>
                 </div>
@@ -353,7 +353,10 @@
        });
     </script>
     <script type="text/javascript">
-        $('.table').DataTable();
+        $('.table').DataTable({
+          "lengthMenu": [5, 10, 15, 20, 50, 100, 150, 200],
+          "pageLength": 15
+        });
         function DeleteData(del_id){
             var tokenData = '{{ csrf_token() }}';
             swal({

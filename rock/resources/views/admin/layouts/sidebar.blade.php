@@ -72,7 +72,9 @@
                 </ul>
             </li>
 
-
+            <li title="Home Slider Section" class="{{ (Request::path() == 'admin/user-log') ? 'active' : '' }}">
+                <a href="{!!url('admin/user-log')!!}"><i class="fa fa-th-large"></i> <span class="nav-label">User Log</span></a>
+            </li>
 
             <li class="Logout">
                 <a href="{!!url('admin/logout')!!}"><i class="fa fa-sign-out"></i> <span class="nav-label">Logout</span></a>

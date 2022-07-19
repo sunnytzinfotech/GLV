@@ -28,6 +28,8 @@ use App\Models\HomePortalCategory;
 use App\Models\HomeSlider;
 use App\Models\Site_data;
 use App\Models\Faq;
+use App\Models\LogData;
+use App\Models\Footer;
 use Carbon\Carbon;
 
 
@@ -158,6 +160,13 @@ class IndexController extends Controller
         $new_user_detail->user_id = $user_detail_id;
         $new_user_detail->save();
 
+        $logdata = new LogData;
+        $logdata->user_id = $user_detail_id;
+        $logdata->stage = 1;
+        $logdata->created_at = date('Y-m-d H:i:s');
+        $logdata->updated_at = date('Y-m-d H:i:s');
+        $logdata->save();
+
         // send email
 
         try {
@@ -216,6 +225,14 @@ class IndexController extends Controller
             $details->updated_at = date('Y-m-d H:i:s');
 
             if ($details->save()) {
+
+                $logdata = new LogData;
+                $logdata->user_id = $details->id;
+                $logdata->stage = 2;
+                $logdata->created_at = date('Y-m-d H:i:s');
+                $logdata->updated_at = date('Y-m-d H:i:s');
+                $logdata->save();
+
                 return redirect('/')->with('code', 2);
             } else {
                 return redirect('/');
@@ -369,6 +386,13 @@ class IndexController extends Controller
         User::where('id','=',$user_id)->update($update_ar);
         UserDetail::updateOrCreate(['user_id' => $user_id], $update_ar_sub);
 
+        $logdata = new LogData;
+        $logdata->user_id = $user_id;
+        $logdata->stage = 3;
+        $logdata->created_at = date('Y-m-d H:i:s');
+        $logdata->updated_at = date('Y-m-d H:i:s');
+        $logdata->save();
+
         $user_data = UserDetail::where('user_id','=',$user_id)->where('distribution_status','=','1')->where('confidentiality_status','=','1')->where('avv_contract_status','=','1')->where('check_status','=','1')->where('step_5_check','=','1')->first();
 
 
@@ -423,11 +447,17 @@ class IndexController extends Controller
                     $mail_res = Mail::send('frontview.forget_user_email', $data, function ($message) use ($email, $site_name) {
                         $message->to($email, $site_name)->subject('Password reset successfully');
                     });
-                    // dd($mail_res);
+
                     $update_user = User::where('email', $email)->first();
                     $update_user->remember_token = $random_no;
 
                     if ($update_user->save()) {
+                        $logdata = new LogData;
+                        $logdata->user_id = $user_id;
+                        $logdata->stage = 5;
+                        $logdata->created_at = date('Y-m-d H:i:s');
+                        $logdata->updated_at = date('Y-m-d H:i:s');
+                        $logdata->save();
 
                         $html = "success";
 
@@ -457,6 +487,7 @@ class IndexController extends Controller
     public function resetPassword(Request $request)
     {
             $data = $request->all();
+
             $new_password = Hash::make($data['new_password']);
 
             $update_user = User::where('remember_token', $data['user_id'])->first();
@@ -467,6 +498,14 @@ class IndexController extends Controller
                 $update_user->remember_token = null;
 
                 if ($update_user->save()) {
+
+                    $logdata = new LogData;
+                    $logdata->user_id = $update_user->id;
+                    $logdata->stage = 6;
+                    $logdata->created_at = date('Y-m-d H:i:s');
+                    $logdata->updated_at = date('Y-m-d H:i:s');
+                    $logdata->save();
+
                     return redirect('/')->with('code', 5);
                 } else {
                     return redirect('/')->with('code', 6);
@@ -745,8 +784,10 @@ class IndexController extends Controller
             $insert = DB::table('user_empfehlung_code')->insertGetId($update_ar);
         }
 
+        $setUsername = env('CLICKSEND_USERNAME'); //h.rocks@glv24.com
+        $setPassword = env('CLICKSEND_PASSWORD'); //EA58AF96-2C3B-E94C-450A-1CEA8CDD3AD3
 
-        $config = \ClickSend\Configuration::getDefaultConfiguration()->setUsername('h.rocks@glv24.com')->setPassword('EA58AF96-2C3B-E94C-450A-1CEA8CDD3AD3');
+        $config = \ClickSend\Configuration::getDefaultConfiguration()->setUsername($setUsername)->setPassword($setPassword);
 
         $apiInstance = new \ClickSend\Api\SMSApi(new \GuzzleHttp\Client(),$config);
         $msg = new \ClickSend\Model\SmsMessage();
@@ -1011,4 +1052,10 @@ class IndexController extends Controller
         $pageData = Site_data::where('page_name','page_data')->where('action','erstinformation')->first();
         return view('frontview.erstinformation')->with('pageData', $pageData);
     }
+
+    public static function getFooter(){
+       $footer = Footer::where('slug','front-footer')->first();
+       return $footer;
+   }
+
 }

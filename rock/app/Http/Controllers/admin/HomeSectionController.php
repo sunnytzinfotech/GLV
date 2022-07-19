@@ -34,7 +34,8 @@ class HomeSectionController extends Controller {
         $id = $sessionData['id'];
         if (isset($id) && ($id != 0)) {
 
-            $result = User::where('urole', "=" , 2)->paginate(15);
+            // $result = User::where('urole', "=" , 2)->paginate(15);
+            $result = User::where('urole', "=" , 2)->get();
 	    	return view('admin.user.index',compact('result'));
 
 		}

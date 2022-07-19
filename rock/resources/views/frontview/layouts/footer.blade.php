@@ -12,7 +12,7 @@
 
 				<div class="col-lg-4 col-md-6 footer-links">
 					<h4>GESCHÄFTSZEITEN</h4>
-					<p><strong>Mo. - Do.</strong> 08:00 - 17:00 Uhr<br><strong>Fr.</strong> 08:00 - 16:00 Uhr</p><br>
+					{{-- <p><strong>Mo. - Do.</strong> 08:00 - 17:00 Uhr<br><strong>Fr.</strong> 08:00 - 16:00 Uhr</p><br> --}}
                     <p>Für einen persönlichen Kontakt<br/>
 						vor Ort vereinbaren Sie bitte<br/>
                         einen Termin.</p>

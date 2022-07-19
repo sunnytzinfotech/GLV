@@ -179,6 +179,8 @@ Route::get('/forget/{id}', 'Frontend\IndexController@resetPasswordPage');
 		Route::post('/active-product', 'admin\PortalController@actionConfim');
 	    Route::post('/active-product-deactive', 'admin\PortalController@actionConfimDeactive');
 
+		Route::get('/user-log', 'admin\LogController@getIndex');
+
 
     });
 

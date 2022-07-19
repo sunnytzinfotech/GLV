@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\CustomFunction\CustomFunction;
 use App\Models\User;
+use App\Models\LogData;
 use DB;
 use Auth;
 
@@ -56,6 +57,26 @@ class LoginController extends Controller
             $result = DB::table('users')->where('email','=', $input['email'])->first();
 
             $user_detail = DB::table('user_detail')->where('user_id','=', $result->id)->first();
+
+            $logdata = LogData::where('user_id','=',$result->id)->where('stage','=',4)->first();
+            $log_ar =array();
+
+            $log_ar['user_id'] = $result->id;
+            $log_ar['stage'] = 4;
+            $log_ar['updated_at'] = date('Y-m-d H:i:s');
+
+            if($logdata){
+                LogData::updateOrCreate(['id' => $logdata->id], $log_ar);
+            }else{
+                $logdata = new LogData;
+                $logdata->user_id = $result->id;
+                $logdata->stage = 4;
+                $logdata->created_at = date('Y-m-d H:i:s');
+                $logdata->updated_at = date('Y-m-d H:i:s');
+                $logdata->save();
+            }
+
+            
 
             if($result->admin_confirm != 0){
 
